@@ -1,4 +1,4 @@
-package com.java.emergency_system_java.services.Enum;
+package com.java.emergency_system_java.services.vehicles.Enum;
 
 public enum TypeEnum {
     CART(1),

@@ -1,17 +1,19 @@
 package com.java.emergency_system_java.entity;
 
-import com.java.emergency_system_java.services.Enum.StatusEnum;
-import com.java.emergency_system_java.services.Enum.TypeEnum;
+import com.java.emergency_system_java.services.vehicles.Enum.StatusEnum;
+import com.java.emergency_system_java.services.vehicles.Enum.TypeEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
 @Entity
+@Table(name = "vehicles")
 public class Vehicle implements Serializable {
     public static final long serialVersionUID = 1L;
     @Id

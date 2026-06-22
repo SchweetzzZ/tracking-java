@@ -1,12 +1,12 @@
-CREATE TABLE tb_user(
+CREATE TABLE tb_users (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL ,
     phone VARCHAR(255) ,
     email VARCHAR(255) UNIQUE,
     password VARCHAR(255) NOT NULL
-)
-CREATE TABLE vehicles (
-    id VARCHAR(36) PRIMARY KEY,,
+);
+CREATE TABLE tb_vehicles (
+    id VARCHAR(36) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     plate VARCHAR(20) UNIQUE,
     type VARCHAR(50) NOT NULL,
@@ -15,5 +15,5 @@ CREATE TABLE vehicles (
     longitude DOUBLE PRECISION NOT NULL,
     tracking_enable BOOLEAN NOT NULL DEFAULT FALSE,
     last_seen TIMESTAMP,
-    speed DOUBLE PRECISION,
+    speed DOUBLE PRECISION
 );

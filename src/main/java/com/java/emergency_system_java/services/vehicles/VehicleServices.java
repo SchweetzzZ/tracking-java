@@ -2,8 +2,8 @@ package com.java.emergency_system_java.services.vehicles;
 
 import com.java.emergency_system_java.entity.Vehicle;
 import com.java.emergency_system_java.repository.VehicleRepository;
-import com.java.emergency_system_java.services.dto.request.VehicleDto;
-import com.java.emergency_system_java.services.dto.request.VehicleUpdateDto;
+import com.java.emergency_system_java.services.vehicles.dto.request.VehicleDto;
+import com.java.emergency_system_java.services.vehicles.dto.request.VehicleUpdateDto;
 import com.java.emergency_system_java.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,7 @@
-package com.java.emergency_system_java.services.dto.request;
+package com.java.emergency_system_java.services.vehicles.dto.request;
 
-import com.java.emergency_system_java.services.Enum.StatusEnum;
-import com.java.emergency_system_java.services.Enum.TypeEnum;
+import com.java.emergency_system_java.services.vehicles.Enum.StatusEnum;
+import com.java.emergency_system_java.services.vehicles.Enum.TypeEnum;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
