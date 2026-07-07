@@ -5,7 +5,6 @@ import com.java.emergency_system_java.entity.Vehicle;
 import com.java.emergency_system_java.repository.TelemetryRepository;
 import com.java.emergency_system_java.repository.VehicleRepository;
 import com.java.emergency_system_java.services.tracking.Dto.request.TrackingDto;
-import com.java.emergency_system_java.services.tracking.Dto.request.TrackingUpdateDto;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

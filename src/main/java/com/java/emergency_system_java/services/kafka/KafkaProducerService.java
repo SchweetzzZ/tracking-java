@@ -1,7 +1,6 @@
 package com.java.emergency_system_java.services.kafka;
 
 import com.java.emergency_system_java.services.tracking.Dto.request.TrackingDto;
-import com.java.emergency_system_java.services.tracking.Dto.request.TrackingUpdateDto;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 

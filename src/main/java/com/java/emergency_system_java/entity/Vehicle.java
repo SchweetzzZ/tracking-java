@@ -3,6 +3,8 @@ package com.java.emergency_system_java.entity;
 import com.java.emergency_system_java.services.vehicles.Enum.StatusEnum;
 import com.java.emergency_system_java.services.vehicles.Enum.TypeEnum;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,8 +26,10 @@ public class Vehicle implements Serializable {
 
     public String plate;
 
+    @Enumerated(EnumType.STRING)
     public TypeEnum type;
 
+    @Enumerated(EnumType.STRING)
     public StatusEnum status;
 
     public Double latitude;

@@ -1,7 +1,7 @@
 package com.java.emergency_system_java.services.vehicles.Enum;
 
 public enum StatusEnum {
-    AVALIABLE(1),
+    AVAILABLE(1),
     DISPACHED(2),
     BUSY(3),
     OFFLINE(4),
