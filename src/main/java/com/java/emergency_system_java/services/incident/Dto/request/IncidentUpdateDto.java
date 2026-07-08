@@ -11,6 +11,6 @@ public record IncidentUpdateDto(
         Double longitude,
         TypeEnum type,
         StatusEnum status,
-        int priority
+        Integer priority
 ) {
 }

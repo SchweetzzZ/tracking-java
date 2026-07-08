@@ -24,32 +24,20 @@ public class TrackingService {
         this.telemetryRepository = telemetryRepository;
     }
 
-    /**
-     * Busca o histórico completo de posições de um veículo ordenado por data.
-     */
     public List<Telemetry> getHistory(Long vehicleId) {
         return this.telemetryRepository.findByVehicleIdOrderByCreatedAtAsc(vehicleId);
     }
 
-    /**
-     * Busca a posição atualizada do veículo direto da tabela principal.
-     */
     public Vehicle getCurrentLocation(Long vehicleId) {
         return this.vehicleRepository.findById(vehicleId)
                 .orElseThrow(() -> new RuntimeException("Veículo não encontrado para rastreamento: " + vehicleId));
     }
 
-    /**
-     * Busca o histórico de telemetria das últimas X horas.
-     */
     public List<Telemetry> getTelemetryHistory(Long vehicleId, int hours) {
         LocalDateTime fromDate = LocalDateTime.now().minusHours(hours);
         return this.telemetryRepository.findByVehicleIdAndCreatedAtAfter(vehicleId, fromDate);
     }
 
-    /**
-     * Calcula estatísticas de velocidade (Média e Máxima) convertendo m/s para km/h.
-     */
     public Map<String, Object> getStats(Long vehicleId) {
         // Busca todas as telemetrias do veículo para calcular as métricas
         List<Telemetry> telemetryList = this.telemetryRepository.findByVehicleIdOrderByCreatedAtAsc(vehicleId);
