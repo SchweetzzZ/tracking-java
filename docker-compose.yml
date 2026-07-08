@@ -21,6 +21,7 @@ services:
   kafka:
     image: confluentinc/cp-kafka:7.6.0
     container_name: emergency-kafka
+    hostname: kafka
     ports:
       - "9092:9092"
     environment:

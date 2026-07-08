@@ -2,7 +2,18 @@ package com.java.emergency_system_java.entity;
 
 import com.java.emergency_system_java.services.vehicles.Enum.StatusEnum;
 import com.java.emergency_system_java.services.vehicles.Enum.TypeEnum;
+<<<<<<< Updated upstream
 import jakarta.persistence.*;
+=======
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+>>>>>>> Stashed changes
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -33,7 +44,10 @@ public class Vehicle implements Serializable {
 
     public Double speed;
 
+    @Column(name = "tracking_enable")
     public Boolean trackingEnable = false;
+
+    @Column(name = "last_seen")
     public Instant lastseen;
 
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

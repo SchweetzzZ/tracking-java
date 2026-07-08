@@ -20,8 +20,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry){
+        // Endpoint com SockJS — para clientes browser (produção)
         registry.addEndpoint("ws-tracking")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
+
+        // Endpoint raw WebSocket — para testes via Hoppscotch/Postman
+        registry.addEndpoint("ws-tracking-raw")
+                .setAllowedOriginPatterns("*");
     }
 }
