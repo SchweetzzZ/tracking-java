@@ -2,16 +2,12 @@ package com.java.emergency_system_java.entity;
 
 import com.java.emergency_system_java.services.vehicles.Enum.StatusEnum;
 import com.java.emergency_system_java.services.vehicles.Enum.TypeEnum;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -39,6 +35,9 @@ public class Vehicle implements Serializable {
 
     public Boolean trackingEnable = false;
     public Instant lastseen;
+
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Assigment> assigments = new ArrayList<>();
 
     public Vehicle(){}
 
