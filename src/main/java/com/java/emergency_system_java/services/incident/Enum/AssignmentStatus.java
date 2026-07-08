@@ -1,7 +1,6 @@
 package com.java.emergency_system_java.services.incident.Enum;
 
-public enum AssigmentStatusEnum {
-
+public enum AssignmentStatus {
     ASSIGNED(1),
     ACCEPTED(2),
     EN_ROUTE(3),
@@ -9,22 +8,22 @@ public enum AssigmentStatusEnum {
     COMPLETED(5),
     CANCELLED(6);
 
-    private int code;
+    private final int code;
 
-    private AssigmentStatusEnum (int code){
+    private AssignmentStatus(int code) {
         this.code = code;
     }
 
-    private int getCode(){
+    public int getCode() {
         return code;
     }
 
-    public AssigmentStatusEnum valueOf(int code) {
-        for (AssigmentStatusEnum value : AssigmentStatusEnum.values()) {
+    public static AssignmentStatus valueOf(int code) {
+        for (AssignmentStatus value : AssignmentStatus.values()) {
             if (value.getCode() == code) {
                 return value;
             }
         }
-        throw new IllegalArgumentException("Invalid statusEnum code");
+        throw new IllegalArgumentException("Invalid status code");
     }
 }

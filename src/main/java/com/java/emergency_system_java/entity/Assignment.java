@@ -1,45 +1,48 @@
-
 package com.java.emergency_system_java.entity;
 
-import com.java.emergency_system_java.services.incident.Enum.AssigmentStatusEnum;
+import com.java.emergency_system_java.services.incident.Enum.AssignmentStatus;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "assignments")
 public class Assignment implements Serializable {
-    public static final long serialVersionUID=1l;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "incident_id", nullable = false)
-    private Incident incidentId;
+    private Incident incident;
 
     @ManyToOne
     @JoinColumn(name = "vehicle_id", nullable = false)
-    private Vehicle vehicleId;
+    private Vehicle vehicle;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private AssigmentStatusEnum status;
+    private AssignmentStatus status = AssignmentStatus.ASSIGNED;
 
     @Column(nullable = false)
     private LocalDateTime assignedAt = LocalDateTime.now();
+    
     private LocalDateTime acceptedAt;
     private LocalDateTime arrivedAt;
     private LocalDateTime completedAt;
+
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public Assignment(){};
+    public Assignment() {}
 
-    public Assignment(String id, Incident incidentId, Vehicle vehicleId, AssigmentStatusEnum status, LocalDateTime assignedAt, LocalDateTime acceptedAt, LocalDateTime arrivedAt, LocalDateTime completedAt, LocalDateTime createdAt) {
+    public Assignment(Long id, Incident incident, Vehicle vehicle, AssignmentStatus status, LocalDateTime assignedAt, LocalDateTime acceptedAt, LocalDateTime arrivedAt, LocalDateTime completedAt, LocalDateTime createdAt) {
         this.id = id;
-        this.incidentId = incidentId;
-        this.vehicleId = vehicleId;
+        this.incident = incident;
+        this.vehicle = vehicle;
         this.status = status;
         this.assignedAt = assignedAt;
         this.acceptedAt = acceptedAt;
@@ -48,35 +51,35 @@ public class Assignment implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Incident getIncidentId() {
-        return incidentId;
+    public Incident getIncident() {
+        return incident;
     }
 
-    public void setIncidentId(Incident incidentId) {
-        this.incidentId = incidentId;
+    public void setIncident(Incident incident) {
+        this.incident = incident;
     }
 
-    public Vehicle getVehicleId() {
-        return vehicleId;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    public void setVehicleId(Vehicle vehicleId) {
-        this.vehicleId = vehicleId;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 
-    public AssigmentStatusEnum getStatus() {
+    public AssignmentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(AssigmentStatusEnum status) {
+    public void setStatus(AssignmentStatus status) {
         this.status = status;
     }
 

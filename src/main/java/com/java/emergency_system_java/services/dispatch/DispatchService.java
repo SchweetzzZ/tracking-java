@@ -8,15 +8,21 @@ import com.java.emergency_system_java.repository.IncidentRepository;
 import com.java.emergency_system_java.repository.VehicleRepository;
 import com.java.emergency_system_java.services.dispatch.Dto.DispatchDto;
 import com.java.emergency_system_java.services.exceptions.ResourceNotFoundException;
+import com.java.emergency_system_java.services.incident.Enum.AssignmentStatus;
+import com.java.emergency_system_java.services.incident.Enum.IncidentStatus;
+import com.java.emergency_system_java.services.vehicles.Enum.VehicleStatus;
 import com.java.emergency_system_java.services.kafka.KafkaProducerService;
 import com.java.emergency_system_java.services.rabbitMQ.Dto.RabbitDto;
 import com.java.emergency_system_java.services.rabbitMQ.RabbitMQService;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
+@Service
 public class DispatchService {
 
     private final IncidentRepository incidentRepository;
@@ -39,22 +45,26 @@ public class DispatchService {
     public Assignment dispatchIncident(DispatchDto dto){
         Incident incident = incidentRepository.findById(dto.incidentId()).orElseThrow(()->
                 new ResourceNotFoundException("incident not found"));
-        if(!"PENDING".equals(incident.getStatus())){
+        if (incident.getStatus() != IncidentStatus.PENDING) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incidente não está pendente");
         }
         Vehicle vehicle = vehicleRepository.findById(dto.vehicleId()).orElseThrow(()->
                 new ResourceNotFoundException("vehicle not found"));
-        if(!"AVALIABLE".equals(vehicle.getStatus())){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "vehicle not avaliable");
+        if (vehicle.getStatus() != VehicleStatus.AVAILABLE) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "vehicle not available");
         }
+        
         Assignment assignment = new Assignment();
-        assignment.setIncidentId(incident);
-        assignment.setVehicleId(vehicle);
+        assignment.setIncident(incident);
+        assignment.setVehicle(vehicle);
+        assignment.setStatus(AssignmentStatus.ASSIGNED);
 
-        incident.setStatus("IN_PROGRESS");
+        assignment = assignmentRepository.save(assignment);
+
+        incident.setStatus(IncidentStatus.IN_PROGRESS);
         incidentRepository.save(incident);
 
-        vehicle.setStatus("DISPATCHED");
+        vehicle.setStatus(VehicleStatus.DISPACHED);
         vehicleRepository.save(vehicle);
 
         RabbitDto rabbitDto = new RabbitDto(
@@ -62,14 +72,15 @@ public class DispatchService {
                 incident.getId(),
                 vehicle.getId()
         );
+        rabbitMQService.publishDispatch(rabbitDto);
 
-        KafkaAuditDto auditDto = new KafkaAuditDto(
-                assignment.getId(),
-                incident.getId(),
-                vehicle.getId(),
-                LocalDateTime.now()
+        Map<String, Object> payload = Map.of(
+                "assignmentId", assignment.getId(),
+                "incidentId", incident.getId(),
+                "vehicleId", vehicle.getId(),
+                "timestamp", LocalDateTime.now().toString()
         );
-        kafkaService.publishAuditEvent("DISPATCH_ASSIGNED", auditDto);
+        kafkaProducerService.publishAuditEvent("DISPATCH_ASSIGNED", payload);
 
         return assignment;
     }

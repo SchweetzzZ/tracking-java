@@ -1,7 +1,6 @@
-
 package com.java.emergency_system_java.entity;
 
-import com.java.emergency_system_java.services.incident.Enum.StatusEnum;
+import com.java.emergency_system_java.services.incident.Enum.IncidentStatus;
 import com.java.emergency_system_java.services.incident.Enum.TypeEnum;
 import jakarta.persistence.*;
 
@@ -10,12 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "incidents")
 public class Incident implements Serializable {
-    public static  final long serialVersionUID=1L;
+    public static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     private String location;
 
@@ -27,16 +28,18 @@ public class Incident implements Serializable {
 
     private Integer priority;
 
-    private StatusEnum status;
+    @Enumerated(EnumType.STRING)
+    private IncidentStatus status;
 
+    @Enumerated(EnumType.STRING)
     private TypeEnum type;
 
     @OneToMany(mappedBy = "incident", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Assignment> assignments = new ArrayList<>();
 
-    public Incident(){};
+    public Incident() {}
 
-    public Incident(String id, String location, String description, Double latitude, Double longitude, Integer priority, StatusEnum status, TypeEnum type) {
+    public Incident(Long id, String location, String description, Double latitude, Double longitude, Integer priority, IncidentStatus status, TypeEnum type) {
         this.id = id;
         this.location = location;
         this.description = description;
@@ -47,11 +50,11 @@ public class Incident implements Serializable {
         this.type = type;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -95,11 +98,11 @@ public class Incident implements Serializable {
         this.priority = priority;
     }
 
-    public StatusEnum getStatus() {
+    public IncidentStatus getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(IncidentStatus status) {
         this.status = status;
     }
 
@@ -113,6 +116,7 @@ public class Incident implements Serializable {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Incident incident = (Incident) o;
         return Objects.equals(id, incident.id);

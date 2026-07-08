@@ -5,15 +5,13 @@ import com.java.emergency_system_java.repository.IncidentRepository;
 import com.java.emergency_system_java.services.exceptions.ResourceNotFoundException;
 import com.java.emergency_system_java.services.incident.Dto.request.IncidentDto;
 import com.java.emergency_system_java.services.incident.Dto.request.IncidentUpdateDto;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class incidentService {
-
+public class IncidentService {
 
     @Autowired
     private IncidentRepository repository;
@@ -28,8 +26,7 @@ public class incidentService {
         incident.setType(dto.type());
         incident.setLocation(dto.location());
 
-        Incident createIncident = repository.save(incident);
-        return createIncident;
+        return repository.save(incident);
     }
 
     public Incident updateData(Long id, IncidentUpdateDto dto) {
@@ -75,5 +72,7 @@ public class incidentService {
         return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
     }
 
-    public List<Incident> findAll(){return repository.findAll();}
+    public List<Incident> findAll(){
+        return repository.findAll();
+    }
 }

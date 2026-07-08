@@ -1,19 +1,8 @@
 package com.java.emergency_system_java.entity;
 
-import com.java.emergency_system_java.services.vehicles.Enum.StatusEnum;
+import com.java.emergency_system_java.services.vehicles.Enum.VehicleStatus;
 import com.java.emergency_system_java.services.vehicles.Enum.TypeEnum;
-<<<<<<< Updated upstream
 import jakarta.persistence.*;
-=======
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
->>>>>>> Stashed changes
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -37,7 +26,7 @@ public class Vehicle implements Serializable {
     public TypeEnum type;
 
     @Enumerated(EnumType.STRING)
-    public StatusEnum status;
+    public VehicleStatus status;
 
     public Double latitude;
     public Double longitude;
@@ -55,7 +44,7 @@ public class Vehicle implements Serializable {
 
     public Vehicle(){}
 
-    public Vehicle(Long id, String name, String plate, TypeEnum type, StatusEnum status, Double longitude, Double latitude, Double speed, Boolean trackingEnable, Instant lastseen) {
+    public Vehicle(Long id, String name, String plate, TypeEnum type, VehicleStatus status, Double longitude, Double latitude, Double speed, Boolean trackingEnable, Instant lastseen) {
         this.id = id;
         this.name = name;
         this.plate = plate;
@@ -100,11 +89,11 @@ public class Vehicle implements Serializable {
         this.type = type;
     }
 
-    public StatusEnum getStatus() {
+    public VehicleStatus getStatus() {
         return status;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(VehicleStatus status) {
         this.status = status;
     }
 
