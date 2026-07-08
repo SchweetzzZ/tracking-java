@@ -32,7 +32,7 @@ public class Incident implements Serializable {
     private TypeEnum type;
 
     @OneToMany(mappedBy = "incident", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Assigment> assigments = new ArrayList<>();
+    private List<Assignment> assignments = new ArrayList<>();
 
     public Incident(){};
 

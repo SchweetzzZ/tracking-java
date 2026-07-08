@@ -1,7 +1,5 @@
 package com.java.emergency_system_java.services.incident.Enum;
 
-import com.java.emergency_system_java.entity.Assigment;
-
 public enum AssigmentStatusEnum {
 
     ASSIGNED(1),

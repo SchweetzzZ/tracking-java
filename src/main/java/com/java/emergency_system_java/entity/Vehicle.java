@@ -51,7 +51,7 @@ public class Vehicle implements Serializable {
     public Instant lastseen;
 
     @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Assigment> assigments = new ArrayList<>();
+    private List<Assignment> assignments = new ArrayList<>();
 
     public Vehicle(){}
 
