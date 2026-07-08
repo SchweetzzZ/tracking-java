@@ -5,6 +5,7 @@ import com.java.emergency_system_java.repository.VehicleRepository;
 import com.java.emergency_system_java.services.vehicles.dto.request.VehicleDto;
 import com.java.emergency_system_java.services.vehicles.dto.request.VehicleUpdateDto;
 import com.java.emergency_system_java.services.exceptions.ResourceNotFoundException;
+import com.java.emergency_system_java.services.vehicles.Enum.VehicleStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -86,5 +87,18 @@ public class VehicleServices {
     public Vehicle findById(Long id){
         Optional<Vehicle> obj = repository.findById(id);
         return obj.orElseThrow(() -> new ResourceNotFoundException(id));
+    }
+
+    public List<Vehicle> findNearestVehicule(Double incidentLat, Double incidentLon) {
+        List<Vehicle> availableVehicles = repository.findByStatus(VehicleStatus.AVAILABLE);
+        if (availableVehicles.isEmpty()) {
+            return List.of();
+        }
+        availableVehicles.sort((v1, v2) -> {
+            double dist1 = Math.pow(v1.getLatitude() - incidentLat, 2) + Math.pow(v1.getLongitude() - incidentLon, 2);
+            double dist2 = Math.pow(v2.getLatitude() - incidentLat, 2) + Math.pow(v2.getLongitude() - incidentLon, 2);
+            return Double.compare(dist1, dist2);
+        });
+        return availableVehicles;
     }
 }

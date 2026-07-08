@@ -5,7 +5,9 @@ import com.java.emergency_system_java.services.realTime.RealTimeService;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RabbitMQConsumer {
     private final RealTimeService realTimeService;
 
