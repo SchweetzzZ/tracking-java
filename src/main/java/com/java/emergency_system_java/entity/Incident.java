@@ -27,8 +27,6 @@ public class Incident implements Serializable {
 
     private Integer priority;
 
-    //chave estrangeira pro assignment
-
     private StatusEnum status;
 
     private TypeEnum type;
