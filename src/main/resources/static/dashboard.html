@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EmergencyTrack – Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', sans-serif; }
+    body { background: #0a0e1a; color: #e2e8f0; }
+    .sidebar { background: linear-gradient(180deg, #0f172a 0%, #1a1f35 100%); border-right: 1px solid rgba(255,255,255,0.06); }
+    .nav-item { transition: all 0.2s; border-radius: 10px; }
+    .nav-item:hover { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+    .nav-item.active { background: rgba(99,102,241,0.25); color: #818cf8; border-left: 3px solid #6366f1; }
+    .card { background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02)); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; transition: all 0.3s; }
+    .card:hover { border-color: rgba(99,102,241,0.3); transform: translateY(-2px); }
+    .stat-card { position: relative; overflow: hidden; }
+    .stat-card::before { content:''; position:absolute; top:0; right:0; width:80px; height:80px; border-radius:50%; opacity:0.15; transform:translate(20px,-20px); }
+    .stat-card.indigo::before { background:#6366f1; }
+    .stat-card.emerald::before { background:#10b981; }
+    .stat-card.amber::before { background:#f59e0b; }
+    .stat-card.rose::before { background:#f43f5e; }
+    .badge { display:inline-flex; align-items:center; padding:2px 10px; border-radius:999px; font-size:11px; font-weight:600; letter-spacing:.5px; }
+    .status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:5px; }
+    .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .top-header { background: rgba(10,14,26,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .ws-indicator { width:10px; height:10px; border-radius:50%; display:inline-block; }
+    .ws-indicator.connected { background:#10b981; box-shadow:0 0 8px #10b981; animation: pulse 2s infinite; }
+    .ws-indicator.disconnected { background:#6b7280; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  </style>
+</head>
+<body class="min-h-screen flex overflow-hidden">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar w-64 min-h-screen flex flex-col fixed left-0 top-0 h-full z-30">
+    <!-- Brand -->
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-white/5">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+      </div>
+      <div>
+        <div class="text-white font-bold text-sm leading-tight">EmergencyTrack</div>
+        <div class="text-gray-500 text-xs">v2.0 · Operacional</div>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto scrollbar-hide">
+      <div class="text-gray-600 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Principal</div>
+      <a href="dashboard.html" class="nav-item active flex items-center gap-3 px-3 py-2.5 text-sm font-medium cursor-pointer">
+        <svg class="w-4.5 h-4.5 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </a>
+      <div class="text-gray-600 text-xs font-semibold uppercase tracking-wider px-3 mb-2 mt-4">Operações</div>
+      <a href="vehicles.html" class="nav-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-400 cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+        Viaturas
+      </a>
+      <a href="incidents.html" class="nav-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-400 cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        Incidentes
+      </a>
+      <a href="dispatches.html" class="nav-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-400 cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Despachos
+      </a>
+      <a href="tracking.html" class="nav-item flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-400 cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Rastreamento
+      </a>
+    </nav>
+
+    <!-- User Info -->
+    <div class="px-4 py-4 border-t border-white/5">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-xs font-bold" id="user-avatar">OP</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium text-white truncate" id="user-name">Operador</div>
+          <div class="text-xs text-gray-500">Logado</div>
+        </div>
+        <button onclick="logout()" class="text-gray-500 hover:text-red-400 transition-colors" title="Sair">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="ml-64 flex-1 flex flex-col min-h-screen">
+    <!-- Top Header -->
+    <header class="top-header sticky top-0 z-20 flex items-center justify-between px-8 py-4">
+      <div>
+        <h1 class="text-xl font-bold text-white">Dashboard</h1>
+        <p class="text-gray-500 text-xs mt-0.5">Visão geral em tempo real do sistema</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 text-xs text-gray-400">
+          <span class="ws-indicator disconnected" id="ws-dot"></span>
+          <span id="ws-status">WebSocket: desconectado</span>
+        </div>
+        <button onclick="refreshAll()" class="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-3 py-2 rounded-lg">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Atualizar
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 p-8 space-y-8 overflow-y-auto">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-4 gap-5">
+        <div class="card stat-card indigo p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-gray-400 text-xs font-medium uppercase tracking-wider">Viaturas</span>
+            <div class="w-9 h-9 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-white" id="stat-vehicles">–</div>
+          <div class="text-xs text-gray-500 mt-1">Total cadastradas</div>
+        </div>
+
+        <div class="card stat-card emerald p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-gray-400 text-xs font-medium uppercase tracking-wider">Disponíveis</span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-white" id="stat-available">–</div>
+          <div class="text-xs text-gray-500 mt-1">Prontas para despacho</div>
+        </div>
+
+        <div class="card stat-card amber p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-gray-400 text-xs font-medium uppercase tracking-wider">Incidentes</span>
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-white" id="stat-incidents">–</div>
+          <div class="text-xs text-gray-500 mt-1">Ativos / Pendentes</div>
+        </div>
+
+        <div class="card stat-card rose p-5">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-gray-400 text-xs font-medium uppercase tracking-wider">Despachos</span>
+            <div class="w-9 h-9 rounded-xl bg-rose-500/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-white" id="stat-dispatches">–</div>
+          <div class="text-xs text-gray-500 mt-1">Em andamento</div>
+        </div>
+      </div>
+
+      <!-- Two columns -->
+      <div class="grid grid-cols-2 gap-6">
+        <!-- Recent Incidents -->
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-white text-sm">Incidentes Recentes</h3>
+            <a href="incidents.html" class="text-xs text-indigo-400 hover:text-indigo-300">Ver todos →</a>
+          </div>
+          <div id="recent-incidents" class="space-y-3">
+            <div class="text-gray-500 text-sm text-center py-6">Carregando...</div>
+          </div>
+        </div>
+
+        <!-- Recent Dispatches -->
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-white text-sm">Despachos Recentes</h3>
+            <a href="dispatches.html" class="text-xs text-indigo-400 hover:text-indigo-300">Ver todos →</a>
+          </div>
+          <div id="recent-dispatches" class="space-y-3">
+            <div class="text-gray-500 text-sm text-center py-6">Carregando...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicles status grid -->
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-white text-sm">Status das Viaturas</h3>
+          <a href="vehicles.html" class="text-xs text-indigo-400 hover:text-indigo-300">Gerenciar →</a>
+        </div>
+        <div id="vehicles-grid" class="grid grid-cols-3 gap-3">
+          <div class="col-span-3 text-gray-500 text-sm text-center py-6">Carregando viaturas...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const API = window.location.origin;
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = 'index.html';
+
+    const orgFetch = window.fetch;
+    window.fetch = async (...args) => {
+      const r = await orgFetch(...args);
+      if (r.status === 401 || r.status === 403) {
+        localStorage.removeItem('token');
+        window.location.href = 'index.html';
+      }
+      return r;
+    };
+
+    function authHeaders() { return { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }; }
+
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'index.html';
+    }
+
+    const vehicleStatusMap = {
+      AVAILABLE: { label: 'Disponível', color: 'bg-emerald-500/20 text-emerald-400', dot: 'bg-emerald-400' },
+      DISPACHED: { label: 'Despachada', color: 'bg-blue-500/20 text-blue-400', dot: 'bg-blue-400' },
+      BUSY: { label: 'Ocupada', color: 'bg-amber-500/20 text-amber-400', dot: 'bg-amber-400' },
+      OFFLINE: { label: 'Offline', color: 'bg-gray-500/20 text-gray-400', dot: 'bg-gray-400' },
+      EN_ROUTE: { label: 'Em Rota', color: 'bg-purple-500/20 text-purple-400', dot: 'bg-purple-400' },
+      AT_INCIDENT: { label: 'No Local', color: 'bg-rose-500/20 text-rose-400', dot: 'bg-rose-400' }
+    };
+
+    const incidentStatusMap = {
+      PENDING: { label: 'Pendente', color: 'bg-amber-500/20 text-amber-400' },
+      IN_PROGRESS: { label: 'Em andamento', color: 'bg-blue-500/20 text-blue-400' },
+      RESOLVED: { label: 'Resolvido', color: 'bg-emerald-500/20 text-emerald-400' }
+    };
+
+    const assignmentStatusMap = {
+      ASSIGNED: { label: 'Atribuído', color: 'bg-indigo-500/20 text-indigo-400' },
+      ACCEPTED: { label: 'Aceito', color: 'bg-blue-500/20 text-blue-400' },
+      EN_ROUTE: { label: 'Em Rota', color: 'bg-purple-500/20 text-purple-400' },
+      ARRIVED: { label: 'No Local', color: 'bg-amber-500/20 text-amber-400' },
+      COMPLETED: { label: 'Concluído', color: 'bg-emerald-500/20 text-emerald-400' },
+      CANCELLED: { label: 'Cancelado', color: 'bg-rose-500/20 text-rose-400' }
+    };
+
+    const vehicleTypeIcons = {
+      AMBULANCE: '🚑', FIRE_TRUCK: '🚒', POLICE_CAR: '🚓', CART: '🚐', TOW_TRUCK: '🚛'
+    };
+    const incidentTypeColors = {
+      ACCIDENT: 'text-amber-400', FIRE: 'text-rose-400', MEDICAL: 'text-blue-400'
+    };
+
+    async function loadDashboard() {
+      try {
+        const [vehiclesRes, incidentsRes, dispatchesRes] = await Promise.all([
+          fetch(`${API}/vehicles`, { headers: authHeaders() }),
+          fetch(`${API}/incidents`, { headers: authHeaders() }),
+          fetch(`${API}/dispatches`, { headers: authHeaders() })
+        ]);
+
+        const vehicles = vehiclesRes.ok ? await vehiclesRes.json() : [];
+        const incidents = incidentsRes.ok ? await incidentsRes.json() : [];
+        const dispatches = dispatchesRes.ok ? await dispatchesRes.json() : [];
+
+        // Stats
+        document.getElementById('stat-vehicles').textContent = vehicles.length;
+        document.getElementById('stat-available').textContent = vehicles.filter(v => v.status === 'AVAILABLE').length;
+        document.getElementById('stat-incidents').textContent = incidents.filter(i => i.status !== 'RESOLVED').length;
+        document.getElementById('stat-dispatches').textContent = dispatches.filter(d => !['COMPLETED','CANCELLED'].includes(d.status)).length;
+
+        // Recent incidents
+        const riEl = document.getElementById('recent-incidents');
+        if (!incidents.length) { riEl.innerHTML = '<div class="text-gray-500 text-sm text-center py-6">Nenhum incidente registrado</div>'; }
+        else {
+          riEl.innerHTML = incidents.slice(0,5).map(i => {
+            const s = incidentStatusMap[i.status] || { label: i.status, color: 'bg-gray-500/20 text-gray-400' };
+            const tc = incidentTypeColors[i.type] || 'text-gray-400';
+            return `<div class="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+              <div class="flex items-center gap-2 flex-1 min-w-0">
+                <span class="text-lg">${i.type === 'ACCIDENT' ? '💥' : i.type === 'FIRE' ? '🔥' : '🏥'}</span>
+                <div class="min-w-0">
+                  <div class="text-sm text-white font-medium truncate">${i.description || 'Sem descrição'}</div>
+                  <div class="text-xs text-gray-500 truncate">${i.location || '—'}</div>
+                </div>
+              </div>
+              <span class="badge ${s.color} ml-2 flex-shrink-0">${s.label}</span>
+            </div>`;
+          }).join('');
+        }
+
+        // Recent dispatches
+        const rdEl = document.getElementById('recent-dispatches');
+        if (!dispatches.length) { rdEl.innerHTML = '<div class="text-gray-500 text-sm text-center py-6">Nenhum despacho registrado</div>'; }
+        else {
+          rdEl.innerHTML = dispatches.slice(0,5).map(d => {
+            const s = assignmentStatusMap[d.status] || { label: d.status, color: 'bg-gray-500/20 text-gray-400' };
+            const vType = d.vehicle?.type || '';
+            return `<div class="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+              <div class="flex items-center gap-2 flex-1 min-w-0">
+                <span class="text-lg">${vehicleTypeIcons[vType] || '🚨'}</span>
+                <div class="min-w-0">
+                  <div class="text-sm text-white font-medium truncate">${d.vehicle?.name || 'Viatura #' + d.vehicle?.id || '–'}</div>
+                  <div class="text-xs text-gray-500">Incidente #${d.incident?.id || '–'}</div>
+                </div>
+              </div>
+              <span class="badge ${s.color} ml-2 flex-shrink-0">${s.label}</span>
+            </div>`;
+          }).join('');
+        }
+
+        // Vehicles grid
+        const vgEl = document.getElementById('vehicles-grid');
+        if (!vehicles.length) { vgEl.innerHTML = '<div class="col-span-3 text-gray-500 text-sm text-center py-6">Nenhuma viatura cadastrada</div>'; }
+        else {
+          vgEl.innerHTML = vehicles.map(v => {
+            const s = vehicleStatusMap[v.status] || { label: v.status, color: 'bg-gray-500/20 text-gray-400', dot: 'bg-gray-400' };
+            return `<div class="flex items-center gap-3 bg-white/5 rounded-xl p-3">
+              <span class="text-2xl">${vehicleTypeIcons[v.type] || '🚨'}</span>
+              <div class="flex-1 min-w-0">
+                <div class="text-sm text-white font-medium truncate">${v.name}</div>
+                <div class="text-xs text-gray-500">${v.plate}</div>
+              </div>
+              <span class="badge ${s.color}"><span class="status-dot ${s.dot}"></span>${s.label}</span>
+            </div>`;
+          }).join('');
+        }
+
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    function refreshAll() { loadDashboard(); }
+    loadDashboard();
+    setInterval(loadDashboard, 15000);
+
+    // WebSocket
+    let stompClient = null;
+    function connectWS() {
+      try {
+        const SockJS = window.SockJS;
+        if (!SockJS) return;
+        const sock = new SockJS(`${API}/ws-tracking`);
+        stompClient = Stomp.over(sock);
+        stompClient.debug = null;
+        stompClient.connect({}, () => {
+          document.getElementById('ws-dot').className = 'ws-indicator connected';
+          document.getElementById('ws-status').textContent = 'WebSocket: conectado';
+          stompClient.subscribe('/topic/location-updates', msg => {
+            console.log('WS update:', msg.body);
+          });
+        }, () => {
+          document.getElementById('ws-dot').className = 'ws-indicator disconnected';
+          document.getElementById('ws-status').textContent = 'WebSocket: desconectado';
+        });
+      } catch(e) {}
+    }
+
+    // Load SockJS and Stomp
+    const s1 = document.createElement('script');
+    s1.src = 'https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js';
+    s1.onload = () => {
+      const s2 = document.createElement('script');
+      s2.src = 'https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js';
+      s2.onload = connectWS;
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s1);
+  </script>
+</body>
+</html>
