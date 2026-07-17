@@ -344,14 +344,33 @@ function initWS(onReady){
   document.head.appendChild(s1);
 }
 
-function startSimulatedTracking(vehicleId){
-  let lat = -23.55052;
-  let lng = -46.633308;
+async function startSimulatedTracking(vehicleId){
+  let lat = -9.4144;
+  let lng = -40.5162;
+  try {
+    const res = await fetch(`${API}/vehicles/${vehicleId}`, {headers: authH()});
+    if (res.ok) {
+      const v = await res.json();
+      if (v.latitude && v.longitude) {
+        lat = v.latitude;
+        lng = v.longitude;
+      }
+    }
+  } catch(e){}
+  
   document.getElementById('track-info').textContent = `🔮 GPS Simulado · 📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  const targetLat = -9.39625;
+  const targetLng = (lng > 0) ? 40.48038 : -40.48038;
+  
   _sendInterval = setInterval(()=>{
     if(!_stompClient?.connected)return;
-    lat += (Math.random() - 0.3) * 0.00015;
-    lng += (Math.random() - 0.3) * 0.00015;
+    const step = 0.0003;
+    if (Math.abs(lat - targetLat) > step) {
+      lat += (targetLat > lat ? 1 : -1) * step;
+    }
+    if (Math.abs(lng - targetLng) > step) {
+      lng += (targetLng > lng ? 1 : -1) * step;
+    }
     document.getElementById('track-info').textContent = `🔮 GPS Simulado · 📍 ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
     const payload = {
       vehicleId: parseInt(_trackingVehicleId),

@@ -1,0 +1,56 @@
+name: pipeline CI/CD do tracking
+
+on:
+  push:
+    branches: [main, master]
+
+jobs:
+  continuos-integration:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: emergency-javaDB
+          POSTGRES_PASSWORD: polegadas5000
+          POSTGRES_USER: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Download all
+        uses: actions/checkout@v4
+
+      - name: Configurar Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Rodar FlyWay migrations
+        run: mvn flyway:migrate -Dflyway.url=jdbc:postgresql://localhost:5432/emergency-javaDB -Dflyway.user=postgres -Dflyway.password=polegadas5000
+
+      - name: Build do jar
+        run: mvn clean package -DskipTests
+
+#CD
+
+continuos-deployment:
+  runs-on: ubuntu-latest
+  needs: [continuos-integration]
+  steps:
+    - name: Conectar no servidor e atualizar app
+      run: |
+        echo "Simulando deploy no servidor de produção..."
+        # Exemplo de comando futuro de deploy via SSH para Java:
+        # echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+        # chmod 600 private_key.pem
+        # No servidor, o deploy geralmente envolve dar um git pull, rodar as migrations, buildar o jar e reiniciar a aplicação (ex: systemctl restart emergency-app ou usando nohup)
+        # ssh -i private_key.pem -o StrictHostKeyChecking=no user@host "cd /app/tracking-java && git pull && mvn flyway:migrate -Dflyway.url=jdbc:postgresql://localhost:5432/emergency-javaDB -Dflyway.user=postgres -Dflyway.password=password && mvn clean package -DskipTests && systemctl restart emergency"
